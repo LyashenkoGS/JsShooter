@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="./styles/main.css">
+    <title>JsShooter</title>
+
+  </head>
+  <body>
+
+<div id="canvas">
+<div id="info" > </div>
+<img id="cross" src="images/cross.png">
+  <img class="target" src="images/simple_target.png">
+<img src="images/bullet_hole.png"  >
+<div id="box">
+  myBox
+</div>
+
+
+</div>
+    <script type="text/javascript">
+      $( document ).ready(function() {
+
+       /* setInterval(function(){  $("#box").css("backgroundColor",function getRandomColor() {
+          var letters = '0123456789ABCDEF'.split('');
+          var color = '#';
+          for (var i = 0; i < 6; i++ ) {
+            color += letters[Math.floor(Math.random() * 16)];
+          }
+          return color;
+        });}, 3000);*/
+
+
+        $("#canvas").mousemove(function(event){
+
+
+          $("#cross").show(2000);
+  $("#cross").offset({left:event.pageX,top:event.pageY});
+        });
+
+        $("#canvas").click(function(event){
+          console.log("click");
+          $(this).append('<img class="hole" src="images/bullet_hole.png" style="left:' + event.pageX + 'px; top:' + event.pageY +'px;">');
+
+        });
+
+
+      });//END DOCYMENT.READY
+
+          </script>
+    <!-- Built with love using Web Starter Kit -->
+  </body>
+</html>
