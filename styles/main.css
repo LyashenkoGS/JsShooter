@@ -6,9 +6,10 @@ body, html {
 
 
 #cross{
+	  
   display: inline-block;
 }
-.target{
+#target{
   top:10px;
   position: absolute;
   display: inline-block;

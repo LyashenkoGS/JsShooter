@@ -15,7 +15,7 @@
 <div id="canvas">
 <div id="info" > </div>
 <img id="cross" src="images/cross.png">
-  <img class="target" src="images/simple_target.png">
+  <img id="target" src="images/simple_target.png">
 <img src="images/bullet_hole.png"  >
 <div id="box">
   myBox
@@ -26,29 +26,22 @@
     <script type="text/javascript">
       $( document ).ready(function() {
 
-       /* setInterval(function(){  $("#box").css("backgroundColor",function getRandomColor() {
-          var letters = '0123456789ABCDEF'.split('');
-          var color = '#';
-          for (var i = 0; i < 6; i++ ) {
-            color += letters[Math.floor(Math.random() * 16)];
-          }
-          return color;
-        });}, 3000);*/
+     
 
 
         $("#canvas").mousemove(function(event){
 
 
-          $("#cross").show(2000);
-  $("#cross").offset({left:event.pageX,top:event.pageY});
+          $("#cross").show(1000);
+  $("#cross").offset({left:event.pageX-25,top:event.pageY-25});
         });
 
         $("#canvas").click(function(event){
           console.log("click");
-          $(this).append('<img class="hole" src="images/bullet_hole.png" style="left:' + event.pageX + 'px; top:' + event.pageY +'px;">');
-
+          $("#canvas").append('<img class="hole" src="images/bullet_hole.png" style="left:' + (event.pageX-25) + 'px; top:' + (event.pageY-25) +'px;">');
         });
-
+		
+	
 
       });//END DOCYMENT.READY
 
