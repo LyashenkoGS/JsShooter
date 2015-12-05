@@ -6,9 +6,15 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.11.0/jquery-ui.js"></script>
+
+	 
     <link rel="stylesheet" type="text/css" href="./styles/main.css">
+	
+	
     <title>JsShooter</title>
 
+	
   </head>
   <body>
 
@@ -25,24 +31,31 @@
 </div>
     <script type="text/javascript">
       $( document ).ready(function() {
+	   var boxElement = document.getElementById('target')
+	   var directionTop=10
+	   var directionLeft=10
+	 boxElement.style.top="0"
+	 boxElement.style.left="0"
+		function loop() {  
+		    myWidth = window.innerWidth;
+			 myHeight = window.innerHeight
 
-     
-
-
-        $("#canvas").mousemove(function(event){
-
-
-          $("#cross").show(1000);
-  $("#cross").offset({left:event.pageX-25,top:event.pageY-25});
-        });
-
-        $("#canvas").click(function(event){
-          console.log("click");
-          $("#canvas").append('<img class="hole" src="images/bullet_hole.png" style="left:' + (event.pageX-25) + 'px; top:' + (event.pageY-25) +'px;">');
-        });
+   
+		if(parseInt(boxElement.style.top)+boxElement.offsetHeight>myHeight||parseInt(boxElement.style.top)<0){
+		directionTop=-directionTop
+		console.log(directionTop)}
 		
-	
-
+   boxElement.style.top=(parseInt(boxElement.style.top)+directionTop)+"px"
+  
+  if(parseInt(boxElement.style.left)+boxElement.offsetWidth>myWidth||parseInt(boxElement.style.left)<0){
+  directionLeft=-directionLeft}
+	 boxElement.style.left=(parseInt(boxElement.style.left)+directionLeft)+"px"
+	  	 // console.log(boxElement.style.top+":top")
+	  	   //console.log(boxElement.style.left+":left")
+		
+ setTimeout( loop, 33 );
+}
+  loop();
       });//END DOCYMENT.READY
 
           </script>
