@@ -24,7 +24,7 @@
   <img id="target" src="images/simple_target.png">
 <img src="images/bullet_hole.png"  >
 <div id="box">
-  myBox
+  myBox`
 </div>
 
 
@@ -56,6 +56,25 @@
  setTimeout( loop, 33 );
 }
   loop();
+  
+  var canvas = document.getElementById('canvas')
+  document.getElementById("canvas").addEventListener("click", hit);
+  
+  function hit(event){
+  console.log("hit")
+  var img = document.createElement("img");
+img.src = "images/bullet_hole.png";
+
+var x = event.clientX;     // Get the horizontal coordinate
+var y = event.clientY;     // Get the vertical coordinate
+var coor = "X coords: " + x + ", Y coords: " + y;
+console.log(coor)
+img.style.left=x+"px"
+img.style.top=y+"px"
+img.className="hole"
+var src =canvas
+src.appendChild(img)
+  }
       });//END DOCYMENT.READY
 
           </script>
