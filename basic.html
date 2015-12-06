@@ -17,12 +17,14 @@
 
 </head>
 <body>
-
-<div id="canvas">
+<input id="photo" type="file">
+<button id="changePhoto" style=" float: right"> changePhoto</button>
+<div id="canvas" style="height: 100%">
     <div id="info"></div>
     <img id="cross" src="images/cross.png">
+
     <div id="target">
-    <img  src="images/simple_target.png">
+        <img id="targetImg" src="images/simple_target.png">
 
     </div>
     <img src="images/bullet_hole.png">
@@ -31,8 +33,10 @@
         myBox`
     </div>
 
-
+ <div id="gun" style="margin-left: 45%;
+    margin-top: 15%"> <img  src="./images/gun.png"></div>
 </div>
+
 <script type="text/javascript">
     $(document).ready(function () {
         var boxElement = document.getElementById('target')
@@ -40,34 +44,74 @@
         var directionLeft = 5
         boxElement.style.top = "0"
         boxElement.style.left = "0"
-        function loop() {
-            myWidth = window.innerWidth;
-            myHeight = window.innerHeight
+        var move = false
+        var timeout
+
+        function loop(event) {
+            if (move) {
+                myWidth = window.innerWidth;
+                myHeight = window.innerHeight
 
 
-            if (parseInt(boxElement.style.top) + boxElement.offsetHeight > myHeight || parseInt(boxElement.style.top) < 0) {
-                directionTop = -directionTop
-                console.log(directionTop)
+                if (parseInt(boxElement.style.top) + boxElement.offsetHeight > myHeight || parseInt(boxElement.style.top) < 0) {
+                    directionTop = -directionTop
+                    console.log(directionTop)
+                }
+
+                boxElement.style.top = (parseInt(boxElement.style.top) + directionTop) + "px"
+
+                if (parseInt(boxElement.style.left) + boxElement.offsetWidth > myWidth || parseInt(boxElement.style.left) < 0) {
+                    directionLeft = -directionLeft
+                }
+                boxElement.style.left = (parseInt(boxElement.style.left) + directionLeft) + "px"
+                // console.log(boxElement.style.top+":top")
+                //console.log(boxElement.style.left+":left")
+
+                timeout = setTimeout(loop, 33);
             }
-
-            boxElement.style.top = (parseInt(boxElement.style.top) + directionTop) + "px"
-
-            if (parseInt(boxElement.style.left) + boxElement.offsetWidth > myWidth || parseInt(boxElement.style.left) < 0) {
-                directionLeft = -directionLeft
-            }
-            boxElement.style.left = (parseInt(boxElement.style.left) + directionLeft) + "px"
-            // console.log(boxElement.style.top+":top")
-            //console.log(boxElement.style.left+":left")
-
-            setTimeout(loop, 33);
         }
 
-    loop();
+        function stop(event) {
+            if (event.keyCode == 80 && move == false) {
+                move = true
+                loop()
+            }
+            else {
+                move = false
+                clearInterval(timeout)
+            }
+        }
+
+        document.onkeydown = stop
 
         var canvas = document.getElementById('canvas')
 
-        var target= document.getElementById('target')
+        var target = document.getElementById('target')
         target.addEventListener("click", hit);
+
+
+        var changePhotoButton=document.getElementById('changePhoto')
+        changePhotoButton.addEventListener("click",changePhoto)
+
+        function changePhoto(){
+            var targetImage=document.getElementById('targetImg')
+            var photo=document.getElementById("photo")
+            var photoName=photo.value
+            var photoSliced=photoName.slice(12)
+            targetImage.src=photoSliced
+            console.log(photoSliced)
+
+
+        }
+
+        function shot(){
+            var gun= document.getElementById("gun")
+            console.log(gun.style.marginTop)
+            gun.style.marginTop=parseInt(gun.style.marginTop)-2 +"%"
+            console.log(gun.style.marginTop)
+            setTimeout( function(){gun.style.marginTop=parseInt(gun.style.marginTop)+2 +"%"}, 100 );
+        }
+
         function hit(event) {
             console.log("hit")
             var img = document.createElement("img");
@@ -77,15 +121,20 @@
             var y = event.clientY;     // Get the vertical coordinate
             var coor = "X coords: " + x + ", Y coords: " + y;
             console.log(coor)
-            img.style.left = x-25 -parseInt(target.style.left) + "px"
-            img.style.top = y-25-parseInt(target.style.top) + "px"
+            img.style.left = x - 25 - parseInt(target.style.left) + "px"
+            img.style.top = y - 25 - parseInt(target.style.top) + "px"
             img.className = "hole"
             var src = target
             src.appendChild(img)
             var audio = new Audio('./sounds/gun-gunshot-01.mp3');
             audio.play();
-            autoplay=true
+            autoplay = true
+          shot()
+
         }
+
+
+
     });//END DOCYMENT.READY
 
 </script>

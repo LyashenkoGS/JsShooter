@@ -24,3 +24,11 @@ body, html {
 .hole{
   position: absolute;
 }
+#gun{
+         margin-left: 45%;
+    margin-top: 15%;
+   }
+#photo{
+display:block;
+float:right;
+}
