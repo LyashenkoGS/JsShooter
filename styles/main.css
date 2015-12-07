@@ -15,12 +15,10 @@ body, html {
   display: inline-block;
 }
 #canvas{
+cursor:crosshair;
   height: 100%;
 }
-/*
-#canvas:hover{
-  cursor: none;
-}*/
+
 .hole{
   position: absolute;
 }
