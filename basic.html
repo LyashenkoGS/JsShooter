@@ -17,10 +17,19 @@
 
 </head>
 <body>
-<input id="photo" type="file">
-<button id="changePhoto" style=" float: right"> changePhoto</button>
+
+<div id="info">
+<ul id="scores">
+    <li>hit:<span id="hit"></span></li>
+    <li>miss:<span id="miss"></span></li>
+</ul>
+<input id="photo" type="file"></br>
+<button id="changePhoto" style="float: right"> changePhoto</button>
+
+</div>
+
 <div id="canvas" style="height: 100%">
-    <div id="info"></div>
+
     <img id="cross" src="images/cross.png">
 
     <div id="target">
@@ -33,96 +42,135 @@
         myBox`
     </div>
 
-    <div id="gun" style="margin-left: 45%;
-    margin-top: 15%"><img src="./images/gun.png"></div>
+    <div id="gun" style="position: fixed;
+bottom: -15px;
+left: 50%;
+transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
 </div>
 
 <script type="text/javascript">
     $(document).ready(function () {
-        (function(){
+      //  (function () {
 
 
-        var target = document.getElementById('target')
-        target.style.top = "0"
-        target.style.left = "0"
+            var target = document.getElementById('target')
+            target.style.top = "0"
+            target.style.left = "0"
 
-        var targetVerticalSpeed = 5
-        var targetHorizontalSpeed = 5
-        var move = false
-        var timeout
-        var browserWidth = window.innerWidth
-        var browserHeight = window.innerHeight
+            var targetVerticalSpeed = 5
+            var targetHorizontalSpeed = 5
+            var move = false
+            var timeout
+            var browserWidth = window.innerWidth
+            var browserHeight = window.innerHeight
+            var numOfHitts = 0
+            var numOfMisses = 0
 
-        function moveTarget(event) {
-            if (move) {
-                targetCollision()
-                target.style.top = (parseInt(target.style.top) + targetVerticalSpeed) + "px"
-                target.style.left = (parseInt(target.style.left) + targetHorizontalSpeed) + "px"
-                timeout = setTimeout(moveTarget, 33);
+            function moveTarget(event) {
+                if (move) {
+                    targetCollision()
+                    target.style.top = (parseInt(target.style.top) + targetVerticalSpeed) + "px"
+                    target.style.left = (parseInt(target.style.left) + targetHorizontalSpeed) + "px"
+                    timeout = setTimeout(moveTarget, 33);
+                }
             }
-        }
 
-        function targetCollision() {
-            //vertical collision
-            if (parseInt(target.style.top) + target.offsetHeight > browserHeight || parseInt(target.style.top) < 0)
-                targetVerticalSpeed = -targetVerticalSpeed
-            //horizontal collision
-            if (parseInt(target.style.left) + target.offsetWidth > browserWidth || parseInt(target.style.left) < 0)
-                targetHorizontalSpeed = -targetHorizontalSpeed
-        }
-
-        document.addEventListener("keydown",stopStartTarget)
-        function stopStartTarget(event) {
-            if (event.keyCode == 80 && move == false) {
-                move = true
-                moveTarget()
+            function targetCollision() {
+                //vertical collision
+                if (parseInt(target.style.top) + target.offsetHeight > browserHeight || parseInt(target.style.top) < 0)
+                    targetVerticalSpeed = -targetVerticalSpeed
+                //horizontal collision
+                if (parseInt(target.style.left) + target.offsetWidth > browserWidth || parseInt(target.style.left) < 0)
+                    targetHorizontalSpeed = -targetHorizontalSpeed
             }
-            else {
-                move = false
-                clearInterval(timeout)
+
+            document.addEventListener("keydown", stopStartTarget)
+            function stopStartTarget(event) {
+                if (event.keyCode == 80 && move == false) {
+                    move = true
+                    moveTarget()
+                }
+                else {
+                    move = false
+                    clearInterval(timeout)
+                }
             }
-        }
 
 
+            var changePhotoButton = document.getElementById('changePhoto')
+            changePhotoButton.addEventListener("click", changePhoto)
+            function changePhoto() {
+                var targetImage = document.getElementById('targetImg')
+                var photo = document.getElementById("photo")
+                var photoName = photo.value
+                var photoSliced = photoName.slice(12)
+                targetImage.src = photoSliced
+            }
 
-        var changePhotoButton = document.getElementById('changePhoto')
-        changePhotoButton.addEventListener("click", changePhoto)
-        function changePhoto() {
-            var targetImage = document.getElementById('targetImg')
-            var photo = document.getElementById("photo")
-            var photoName = photo.value
-            var photoSliced = photoName.slice(12)
-            targetImage.src = photoSliced
-        }
+            function shot() {
+                var audio = new Audio('./sounds/gun-gunshot-01.mp3')
+                audio.play();
+                var gun = document.getElementById("gun")
+                gun.style.bottom = parseInt(gun.style.bottom) + 20 + "px"
+                console.log(gun.style.bottom)
+                setTimeout(function () {
+                    gun.style.bottom = parseInt(gun.style.bottom) - 20 + "px"
+                }, 100);
+            }
 
-        function shot() {
-            var gun = document.getElementById("gun")
-            gun.style.marginTop = parseInt(gun.style.marginTop) - 2 + "%"
-            setTimeout(function () {
-                gun.style.marginTop = parseInt(gun.style.marginTop) + 2 + "%"
-            }, 100);
-        }
+            var target = document.getElementById('target')
+            document.addEventListener("click", hit)
 
-        var target = document.getElementById('target')
-        target.addEventListener("click", hit)
+            function hit(event) {
+                var img = document.createElement("img")
+                img.src = "images/bullet_hole.png"
 
-        function hit(event) {
-            var img = document.createElement("img")
-            img.src = "images/bullet_hole.png"
+                var x = event.clientX;     // Get the horizontal coordinate
+                var y = event.clientY;     // Get the vertical coordinate
+                if (hitMiss(event)) {
+                    img.style.left = x - 25 - parseInt(target.style.left) + "px"
+                    img.style.top = y - 25 - parseInt(target.style.top) + "px"
+                    img.className = "hole"
+                    var src = target
+                    src.appendChild(img)
 
-            var x = event.clientX;     // Get the horizontal coordinate
-            var y = event.clientY;     // Get the vertical coordinate
+                }
+                shot()
+            }
 
-            img.style.left = x - 25 - parseInt(target.style.left) + "px"
-            img.style.top = y - 25 - parseInt(target.style.top) + "px"
-            img.className = "hole"
-            var src = target
-            src.appendChild(img)
-            var audio = new Audio('./sounds/gun-gunshot-01.mp3')
-            audio.play();
-            shot()
-        }
-        })()//end of clojure
+            function hitMiss(event) {
+                var x = event.clientX;     // Get the horizontal coordinate
+                var y = event.clientY;     // Get the vertical coordinate
+                if (y < parseInt(target.style.top) + target.offsetHeight &&
+                        y > parseInt(target.style.top) && x > parseInt(target.style.left) && x < parseInt(target.style.left) + target.offsetWidth) {
+                    numOfHitts++
+                    var hitEl = document.getElementById("hit")
+                    hitEl.innerHTML = numOfHitts
+                    return true
+                }
+                else {
+                    numOfMisses++
+                    var missEl = document.getElementById("miss")
+                    missEl.innerHTML = numOfMisses
+                }
+            }
+
+           document.onmousemove=rotateGun
+            function rotateGun(event){
+                var x = event.clientX;     // Get the horizontal coordinate
+                var y = event.clientY;// Get the vertical coordinate
+                var newX=(browserWidth/2) -x
+                var newY=(browserHeight)-y
+                console.log("x:"+newX+"; y:"+newY)
+                var rad=Math.atan2(newY,newX)
+                var degrees = rad * (180/Math.PI)
+                console.log(degrees-90)
+                var gun = document.getElementById("gunImg")
+                gun.style.transform = 'rotate('+(degrees-90)+'deg)';
+                console.log(gun.style.transform)
+            }
+
+    //    })()//end of the clojure
 
 
     });//END DOCYMENT.READY

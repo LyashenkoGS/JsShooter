@@ -25,10 +25,15 @@ body, html {
   position: absolute;
 }
 #gun{
-         margin-left: 45%;
-    margin-top: 15%;
+      position: fixed;
+bottom: 0px;
+left: 50%;
+transform: translate(-50%, 0px);
    }
-#photo{
-display:block;
-float:right;
+
+#scores{
+    list-style: none;
+}
+#info{
+    float: right;
 }
