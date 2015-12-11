@@ -92,22 +92,61 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
                     target.style.left = (parseInt(target.style.left) + targetHorizontalSpeed) + "px"
                 },33)
             }
+
+           this.hit = function(event) {
+                var img = document.createElement("img")
+                img.src = "images/bullet_hole.png"
+
+                var x = event.clientX;     // Get the horizontal coordinate
+                var y = event.clientY;     // Get the vertical coordinate
+                if (hitMiss(event)) {
+                    img.style.left = x - 25 - parseInt(target.style.left) + "px"
+                    img.style.top = y - 25 - parseInt(target.style.top) + "px"
+                    img.className = "hole"
+                    var src = target
+                    src.appendChild(img)
+
+                }
+                shot()
+            }
+
+
+            function hitMiss(event) {
+                var x = event.clientX;     // Get the horizontal coordinate
+                var y = event.clientY;     // Get the vertical coordinate
+                if (y < parseInt(target.style.top) + target.offsetHeight &&
+                        y > parseInt(target.style.top) && x > parseInt(target.style.left) && x < parseInt(target.style.left) + target.offsetWidth) {
+                    numOfHitts++
+                    var hitEl = document.getElementById("hit")
+                    hitEl.innerHTML = numOfHitts
+                    return true
+                }
+                else {
+                    numOfMisses++
+                    var missEl = document.getElementById("miss")
+                    missEl.innerHTML = numOfMisses
+                }
+            }
+
+
         }
 
 
 var targets=[]
-
-        for (i=0;i<10;i++){
-            targets[i]=new Target()
-            console.log(targets[i])
-            targets[i].move()
+        for (n=0;n<5;n++){
+            targets[n]=new Target()
+           // console.log(targets[n])
+targets[n].move()
         }
-        var myTarget = new Target();
-myTarget.move()
 
 
-
-
+function clickedMouse(event) {
+    for (j = 0; j < targets.length; j++) {
+      console.log(targets[j])
+        targets[j].hit(event)
+    }
+}
+        document.addEventListener("click", clickedMouse)
 
 
             function moveTarget(event) {
@@ -162,8 +201,8 @@ myTarget.move()
                 }, 100);
             }
 
-            var target = document.getElementById('target')
-            document.addEventListener("click", hit)
+            var target = document.getElementById('document')
+
 
             function hit(event) {
                 var img = document.createElement("img")
@@ -182,22 +221,7 @@ myTarget.move()
                 shot()
             }
 
-            function hitMiss(event) {
-                var x = event.clientX;     // Get the horizontal coordinate
-                var y = event.clientY;     // Get the vertical coordinate
-                if (y < parseInt(target.style.top) + target.offsetHeight &&
-                        y > parseInt(target.style.top) && x > parseInt(target.style.left) && x < parseInt(target.style.left) + target.offsetWidth) {
-                    numOfHitts++
-                    var hitEl = document.getElementById("hit")
-                    hitEl.innerHTML = numOfHitts
-                    return true
-                }
-                else {
-                    numOfMisses++
-                    var missEl = document.getElementById("miss")
-                    missEl.innerHTML = numOfMisses
-                }
-            }
+
 
            document.onmousemove=rotateGun
             function rotateGun(event){
@@ -205,13 +229,10 @@ myTarget.move()
                 var y = event.clientY;// Get the vertical coordinate
                 var newX=(browserWidth/2) -x
                 var newY=(browserHeight)-y
-                console.log("x:"+newX+"; y:"+newY)
                 var rad=Math.atan2(newY,newX)
                 var degrees = rad * (180/Math.PI)
-                console.log(degrees-90)
                 var gun = document.getElementById("gunImg")
                 gun.style.transform = 'rotate('+(degrees-90)+'deg)';
-                console.log(gun.style.transform)
             }
 
     //    })()//end of the clojure
