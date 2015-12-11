@@ -35,3 +35,6 @@ transform: translate(-50%, 0px);
 #info{
     float: right;
 }
+.target{position: absolute;
+    display: inline-block;
+}
