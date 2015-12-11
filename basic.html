@@ -47,11 +47,22 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
 <script type="text/javascript">
     $(document).ready(function () {
 
+            var target = document.getElementById('target')
+            target.style.top = "100px"
+            target.style.left = "100px"
 
+            var targetVerticalSpeed = 5
+            var targetHorizontalSpeed = 5
+            var move = false
+            var timeout
+            var browserWidth = window.innerWidth
+            var browserHeight = window.innerHeight
+            var numOfHitts = 0
+            var numOfMisses = 0
 
-       //trying to use OOP
         //constructor for targets
         function Target(){
+
             var targetVerticalSpeed = 5
             var targetHorizontalSpeed = 5
             var img = document.createElement("img")
@@ -63,49 +74,48 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
             var canvas=document.getElementById("canvas")
             canvas.appendChild(target)
                 target.appendChild(img)
-             this.target=target
 
-            this.move=function(){
-            this.target.style.top = (parseInt(this.target.style.top) + targetVerticalSpeed) + "px"
-       this.target.style.left = (parseInt(this.target.style.left) + targetHorizontalSpeed) + "px"
 
+            function targetCollision() {
+                //vertical collision
+                if (parseInt(target.style.top) + target.offsetHeight > browserHeight || parseInt(target.style.top) < 0)
+                    targetVerticalSpeed = -targetVerticalSpeed
+                //horizontal collision
+                if (parseInt(target.style.left) + target.offsetWidth > browserWidth || parseInt(target.style.left) < 0)
+                    targetHorizontalSpeed = -targetHorizontalSpeed
             }
 
-
-
+            this.move=function(){
+                setInterval(function(){
+                    targetCollision()
+                    target.style.top = (parseInt(target.style.top) + targetVerticalSpeed) + "px"
+                    target.style.left = (parseInt(target.style.left) + targetHorizontalSpeed) + "px"
+                },33)
+            }
         }
 
 
+var targets=[]
 
-var myTar = new Target()
-       console.log( myTar.move())
-        for (i = 0; i < 50; i++) {
-       myTar.move()
+        for (i=0;i<10;i++){
+            targets[i]=new Target()
+            console.log(targets[i])
+            targets[i].move()
         }
-
-
-// below is old work functional code
-        var target = document.getElementById('target')
-        target.style.top = "100px"
-        target.style.left = "100px"
-
-        var targetVerticalSpeed = 5
-        var targetHorizontalSpeed = 5
-        var move = false
-        var timeout
-        var browserWidth = window.innerWidth
-        var browserHeight = window.innerHeight
-        var numOfHitts = 0
-        var numOfMisses = 0
+        var myTarget = new Target();
+myTarget.move()
 
 
 
-        function moveTarget(event) {
+
+
+
+            function moveTarget(event) {
                 if (move) {
                     targetCollision()
                     target.style.top = (parseInt(target.style.top) + targetVerticalSpeed) + "px"
                     target.style.left = (parseInt(target.style.left) + targetHorizontalSpeed) + "px"
-
+                    timeout = setTimeout(moveTarget, 33);
                 }
             }
 
@@ -146,7 +156,7 @@ var myTar = new Target()
                 audio.play();
                 var gun = document.getElementById("gun")
                 gun.style.bottom = parseInt(gun.style.bottom) + 20 + "px"
-                console.log(gun.style.bottom)
+
                 setTimeout(function () {
                     gun.style.bottom = parseInt(gun.style.bottom) - 20 + "px"
                 }, 100);
