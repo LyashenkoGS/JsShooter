@@ -19,62 +19,57 @@
 <body>
 
 <div id="info">
-<ul id="scores">
-    <li>hit:<span id="hit"></span></li>
-    <li>miss:<span id="miss"></span></li>
-</ul>
-<input id="photo" type="file"></br>
-<button id="changePhoto" style="float: right"> changePhoto</button>
+    <ul id="scores">
+        <li>hit:<span id="hit"></span></li>
+        <li>miss:<span id="miss"></span></li>
+    </ul>
+    <input id="photo" type="file"></br>
+    <button id="changePhoto" style="float: right"> changePhoto</button>
 
 </div>
+<div class="game_over">
+    GAME OVER
+    <p>press 'r' to restart</p>
+</div>
+<div class="win">
+    WIN!!
+    <p>press 'r' to restart</p>
+</div>
+<div id="countdown"></div>
+
+
 
 <div id="canvas" style="height: 100%">
 
-    <div id="target">
-        <img id="targetImg" src="images/simple_target.png">
+</div>
 
-    </div>
-
-
-
-
-    <div id="gun" style="position: fixed;
+<div id="gun" style="position: fixed;
 bottom: -15px;
 left: 50%;
 transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
-</div>
-
 <script type="text/javascript">
     $(document).ready(function () {
-
-            var target = document.getElementById('target')
-            target.style.top = "100px"
-            target.style.left = "100px"
-
-            var targetVerticalSpeed = 5
-            var targetHorizontalSpeed = 5
-            var move = false
-            var timeout
-            var browserWidth = window.innerWidth
-            var browserHeight = window.innerHeight
-            var numOfHitts = 0
-            var numOfMisses = 0
+        var win=true
+        var move = false
+        var browserWidth = window.innerWidth
+        var browserHeight = window.innerHeight
+        var numOfHits = 0
 
         //constructor for targets
-        function Target(){
-
-            var targetVerticalSpeed = 5
-            var targetHorizontalSpeed = 5
+        function Target() {
+            var interval
+            var plusOrMinus = Math.random() < 0.5 ? -1 : 1;
+            var targetVerticalSpeed = 3 * plusOrMinus + Math.ceil(Math.random() * 2)
+            var targetHorizontalSpeed = 7 * plusOrMinus + Math.ceil(Math.random() * 2)
             var img = document.createElement("img")
             img.src = "images/simple_target.png"
-            var target=document.createElement("div")
+            var target = document.createElement("div")
             target.className = "target"
-            target.style.left ="50px"
-            target.style.top ="50px"
-            var canvas=document.getElementById("canvas")
+            target.style.left = Math.random() * 600 + "px"
+            target.style.top = Math.random() * 600 + "px"
+            var canvas = document.getElementById("canvas")
             canvas.appendChild(target)
-                target.appendChild(img)
-
+            target.appendChild(img)
 
             function targetCollision() {
                 //vertical collision
@@ -83,20 +78,31 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
                 //horizontal collision
                 if (parseInt(target.style.left) + target.offsetWidth > browserWidth || parseInt(target.style.left) < 0)
                     targetHorizontalSpeed = -targetHorizontalSpeed
+
             }
 
-            this.move=function(){
-                setInterval(function(){
+            this.changePhoto = function () {
+                var photo = document.getElementById("photo")
+                var photoName = photo.value
+                var photoSliced = photoName.slice(12)
+                img.src = photoSliced
+
+            }
+            this.move = function () {
+                interval = setInterval(function () {
                     targetCollision()
                     target.style.top = (parseInt(target.style.top) + targetVerticalSpeed) + "px"
                     target.style.left = (parseInt(target.style.left) + targetHorizontalSpeed) + "px"
-                },33)
+                }, 33)
             }
 
-           this.hit = function(event) {
+            this.stop = function () {
+                clearInterval(interval);
+            }
+
+            this.hit = function (event) {
                 var img = document.createElement("img")
                 img.src = "images/bullet_hole.png"
-
                 var x = event.clientX;     // Get the horizontal coordinate
                 var y = event.clientY;     // Get the vertical coordinate
                 if (hitMiss(event)) {
@@ -105,137 +111,134 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
                     img.className = "hole"
                     var src = target
                     src.appendChild(img)
-
+                    this.life -= 10
+                    targetVerticalSpeed = (Math.abs(targetVerticalSpeed) + 1) * -1
+                    targetHorizontalSpeed = (Math.abs(targetHorizontalSpeed) + 1) * -1
+                    if (this.life == 0)
+                        target.style.display = "none";
                 }
-                shot()
-            }
 
+            }
+            this.life = 100
 
             function hitMiss(event) {
                 var x = event.clientX;     // Get the horizontal coordinate
                 var y = event.clientY;     // Get the vertical coordinate
                 if (y < parseInt(target.style.top) + target.offsetHeight &&
                         y > parseInt(target.style.top) && x > parseInt(target.style.left) && x < parseInt(target.style.left) + target.offsetWidth) {
-                    numOfHitts++
+                    numOfHits++
                     var hitEl = document.getElementById("hit")
-                    hitEl.innerHTML = numOfHitts
+                    hitEl.innerHTML = numOfHits
                     return true
                 }
-                else {
-                    numOfMisses++
-                    var missEl = document.getElementById("miss")
-                    missEl.innerHTML = numOfMisses
-                }
+
             }
 
 
         }
 
 
-var targets=[]
-        for (n=0;n<5;n++){
-            targets[n]=new Target()
-           // console.log(targets[n])
-targets[n].move()
+        var targets = []
+
+        document.addEventListener("keydown", start)
+        function start() {
+            document.getElementsByClassName('game_over')[0].style.display="none"
+            if (event.keyCode == 82) {
+                document.getElementById("canvas").innerHTML = ""
+                for (var n = 0; n < 5; n++) {
+                    targets[n] = new Target()
+                    targets[n].move()//Todo why doesnt work ?
+                }
+                timer()
+            }
         }
 
-
-function clickedMouse(event) {
-    for (j = 0; j < targets.length; j++) {
-      console.log(targets[j])
-        targets[j].hit(event)
-    }
-}
         document.addEventListener("click", clickedMouse)
+        function clickedMouse(event) {
+            shot()
+            for (var j = 0; j < targets.length; j++) {
+                targets[j].hit(event)
+            }
+        }
 
 
-            function moveTarget(event) {
-                if (move) {
-                    targetCollision()
-                    target.style.top = (parseInt(target.style.top) + targetVerticalSpeed) + "px"
-                    target.style.left = (parseInt(target.style.left) + targetHorizontalSpeed) + "px"
-                    timeout = setTimeout(moveTarget, 33);
+        document.addEventListener("keydown", stopStartTarget)
+        function stopStartTarget(event) {
+            if (event.keyCode == 80 && move == false) {
+                for (var j = 0; j < targets.length; j++) {
+                    targets[j].move()
+                }
+                move = true
+            }
+            else {
+                move = false
+                for (var k = 0; k < targets.length; k++) {
+                    targets[k].stop()
                 }
             }
+        }
 
-            function targetCollision() {
-                //vertical collision
-                if (parseInt(target.style.top) + target.offsetHeight > browserHeight || parseInt(target.style.top) < 0)
-                    targetVerticalSpeed = -targetVerticalSpeed
-                //horizontal collision
-                if (parseInt(target.style.left) + target.offsetWidth > browserWidth || parseInt(target.style.left) < 0)
-                    targetHorizontalSpeed = -targetHorizontalSpeed
+        var changePhotoButton = document.getElementById('changePhoto')
+        changePhotoButton.addEventListener("click", changePhoto)
+        function changePhoto() {
+            for (j = 0; j < targets.length; j++) {
+                targets[j].changePhoto()
             }
 
-            document.addEventListener("keydown", stopStartTarget)
-            function stopStartTarget(event) {
-                if (event.keyCode == 80 && move == false) {
-                    move = true
-                    moveTarget()
+        }
+
+        function shot() {
+            var audio = new Audio('./sounds/gun-gunshot-01.mp3')
+            audio.play();
+            var gun = document.getElementById("gun")
+            gun.style.bottom = parseInt(gun.style.bottom) + 20 + "px"
+
+            setTimeout(function () {
+                gun.style.bottom = parseInt(gun.style.bottom) - 20 + "px"
+            }, 100);
+        }
+
+
+        document.onmousemove = rotateGun
+        function rotateGun(event) {
+            var x = event.clientX;     // Get the horizontal coordinate
+            var y = event.clientY;// Get the vertical coordinate
+            var newX = (browserWidth / 2) - x
+            var newY = (browserHeight) - y
+            var rad = Math.atan2(newY, newX)
+            var degrees = rad * (180 / Math.PI)
+            var gun = document.getElementById("gunImg")
+            gun.style.transform = 'rotate(' + (degrees - 90) + 'deg)';
+        }
+
+
+        function timer(){
+        var t=20
+            console.log("sss")
+          var timer=  setInterval(function(){
+               var countdown= document.getElementById("countdown")
+            countdown.textContent=t
+                t-=1
+              if(t==0){
+clearInterval(timer)
+                  countdown.textContent="time finished"
+              for (var j = 0; j < targets.length; j++) {
+                win=targets[j].life==0 && win
                 }
-                else {
-                    move = false
-                    clearInterval(timeout)
-                }
-            }
-
-
-            var changePhotoButton = document.getElementById('changePhoto')
-            changePhotoButton.addEventListener("click", changePhoto)
-            function changePhoto() {
-                var targetImage = document.getElementById('targetImg')
-                var photo = document.getElementById("photo")
-                var photoName = photo.value
-                var photoSliced = photoName.slice(12)
-                targetImage.src = photoSliced
-            }
-
-            function shot() {
-                var audio = new Audio('./sounds/gun-gunshot-01.mp3')
-                audio.play();
-                var gun = document.getElementById("gun")
-                gun.style.bottom = parseInt(gun.style.bottom) + 20 + "px"
-
-                setTimeout(function () {
-                    gun.style.bottom = parseInt(gun.style.bottom) - 20 + "px"
-                }, 100);
-            }
-
-            var target = document.getElementById('document')
-
-
-            function hit(event) {
-                var img = document.createElement("img")
-                img.src = "images/bullet_hole.png"
-
-                var x = event.clientX;     // Get the horizontal coordinate
-                var y = event.clientY;     // Get the vertical coordinate
-                if (hitMiss(event)) {
-                    img.style.left = x - 25 - parseInt(target.style.left) + "px"
-                    img.style.top = y - 25 - parseInt(target.style.top) + "px"
-                    img.className = "hole"
-                    var src = target
-                    src.appendChild(img)
-
-                }
-                shot()
-            }
+                  if(!win){
+             document.getElementsByClassName('game_over')[0].style.display="block"
+                  }
+                  else{
+                      document.getElementsByClassName('win')[0].style.display="block"
+                  }
+             }
+            },1000)}
 
 
 
-           document.onmousemove=rotateGun
-            function rotateGun(event){
-                var x = event.clientX;     // Get the horizontal coordinate
-                var y = event.clientY;// Get the vertical coordinate
-                var newX=(browserWidth/2) -x
-                var newY=(browserHeight)-y
-                var rad=Math.atan2(newY,newX)
-                var degrees = rad * (180/Math.PI)
-                var gun = document.getElementById("gunImg")
-                gun.style.transform = 'rotate('+(degrees-90)+'deg)';
-            }
 
-    //    })()//end of the clojure
+
+
 
 
     });//END DOCYMENT.READY

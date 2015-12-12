@@ -38,3 +38,17 @@ transform: translate(-50%, 0px);
 .target{position: absolute;
     display: inline-block;
 }
+.game_over{
+    color: red;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0px);
+display: none;
+}
+.win{
+    color: #fff236;
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 0px);
+    display: none;
+}
