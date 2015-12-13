@@ -12,6 +12,7 @@
 <body>
 
 <div id="info">
+    <div id="countdown"></div>
     <ul id="scores">
         <li>hit:<span id="hit"></span></li>
     </ul>
@@ -27,7 +28,7 @@
     WIN!!
     <p>press 'r' to restart</p>
 </div>
-<div id="countdown"></div>
+
 
 
 <div id="canvas" style="height: 100%">
@@ -41,8 +42,7 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
 <script type="text/javascript">
     (function () {
         var win = false
-        var move = false
-        var browserHeight = window.innerHeight
+        var move = true
         var numOfHits = 0
         var targets = []
 
@@ -50,7 +50,6 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
         function Target() {
             var interval
             var plusOrMinus = function(){
-
                 return Math.random() < 0.5 ? -1 : 1};
             var targetVerticalSpeed = plusOrMinus()*(3  + Math.ceil(Math.random() * 2))
             var targetHorizontalSpeed = plusOrMinus() *(7  + Math.ceil(Math.random() * 2))
@@ -69,16 +68,14 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
             this.changePhoto = function () {
                 var photo = document.getElementById("photo")
                 var photoName = photo.value
-                var photoSliced = photoName.slice(12)
-                img.src = photoSliced
+                img.src = photoName.slice(12)
             }
 
             this.move = function () {
-                interval = setInterval(function () {
+              interval = setInterval(function () {
                     targetCollision()
                     target.style.top = (parseInt(target.style.top) + targetVerticalSpeed) + "px"
                     target.style.left = (parseInt(target.style.left) + targetHorizontalSpeed) + "px"
-
                 }, 33)
             }
 
@@ -137,8 +134,10 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
                 document.getElementById("canvas").innerHTML = ""
                 for (var n = 0; n < 5; n++) {
                     targets[n] = new Target()
-                    targets[n].move()//Todo why doesnt work ?
+                    targets[n].move()
+                  //Todo why doesnt work ?
                 }
+
                 timing()
             }
         })
@@ -167,7 +166,7 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
                 }
                 move = true
             }
-            else {
+            else if(event.keyCode == 80) {
                 move = false
                 for (var k = 0; k < targets.length; k++) {
                     targets[k].stop()
@@ -200,7 +199,7 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
             var t = 20
             var timer = setInterval(function () {
                 var countdown = document.getElementById("countdown")
-                countdown.textContent = t
+                countdown.textContent = t+"s"
                 t -= 1
                 if (t == 0) {
                     clearInterval(timer)

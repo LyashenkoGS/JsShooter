@@ -52,3 +52,7 @@ display: none;
     transform: translate(-50%, 0px);
     display: none;
 }
+#info{
+    font-size: 2em;
+color: #f0ffff
+}
