@@ -1,46 +1,45 @@
-<!doctype html>
-<html lang="">
-<head>
-    <meta charset="utf-8">
+<!DOCTYPE html>
+<html lang=""><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="./styles/main.css">
+    <link rel="stylesheet" type="text/css" href="./resources/style/shooter.css">
+
 
     <title>JsShooter</title>
 </head>
 <body>
 
 <div id="info">
-    <div id="countdown"></div>
+    <div id="countdown">time finished</div>
     <ul id="scores">
-        <li>hit:<span id="hit"></span></li>
+        <li>hit:<span id="hit">9</span></li>
     </ul>
-    <input id="photo" type="file"></br>
+    <input id="photoUrl" type="text" placeholder="new target URL">
+    <br>
     <button id="changePhoto" style="float: right"> changePhoto</button>
 
+
 </div>
-<div class="game_over">
+<div class="game_over" style="display: none;">
     GAME OVER
     <p>press 'r' to restart</p>
 </div>
-<div class="win">
+<div class="win" style="display: none;">
     WIN!!
     <p>press 'r' to restart</p>
 </div>
 
 
-
-<div id="canvas" style="height: 100%">
-
+<div id="canvas" style="height: 100%"></div>
+R
+<div id="gun" style="position: fixed; bottom: -15px; left: 50%; transform: translate(-50%, 0px);"><img id="gunImg" src="./resources/shooterImg/gun.png" style="transform: rotate(-41.4677deg);">
 </div>
-
-<div id="gun" style="position: fixed;
-bottom: -15px;
-left: 50%;
-transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
 <script type="text/javascript">
     (function () {
+        var timer
+        var defaultPhoto="https://metrouk2.files.wordpress.com/2015/03/ad_161888246.jpg"
         var win = false
         var move = true
         var numOfHits = 0
@@ -49,16 +48,18 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
         //constructor for targets
         function Target() {
             var interval
-            var plusOrMinus = function(){
-                return Math.random() < 0.5 ? -1 : 1};
-            var targetVerticalSpeed = plusOrMinus()*(3  + Math.ceil(Math.random() * 2))
-            var targetHorizontalSpeed = plusOrMinus() *(7  + Math.ceil(Math.random() * 2))
+            var plusOrMinus = function () {
+                return Math.random() < 0.5 ? -1 : 1
+            };
+            var targetVerticalSpeed = plusOrMinus() * (3 + Math.ceil(Math.random() * 2))
+            var targetHorizontalSpeed = plusOrMinus() * (7 + Math.ceil(Math.random() * 2))
             var img = document.createElement("img")
-            img.src = "images/simple_target.png"
+            img.src = defaultPhoto
+            img.style.width="200px"
             var target = document.createElement("div")
             target.className = "target"
-            target.style.left = (Math.random() *  window.innerWidth/1.5) + "px"
-            target.style.top = (Math.random() * window.innerHeight/1.5) + "px"
+            target.style.left = (Math.random() * window.innerWidth / 1.5) + "px"
+            target.style.top = (Math.random() * window.innerHeight / 1.5) + "px"
             var canvas = document.getElementById("canvas")
             canvas.appendChild(target)
             target.appendChild(img)
@@ -66,13 +67,13 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
             this.life = 100
 
             this.changePhoto = function () {
-                var photo = document.getElementById("photo")
-                var photoName = photo.value
-                img.src = photoName.slice(12)
+                var photo = document.getElementById("photoUrl")
+                img.src = photo.value
+                defaultPhoto=photo.value
             }
 
             this.move = function () {
-              interval = setInterval(function () {
+                interval = setInterval(function () {
                     targetCollision()
                     target.style.top = (parseInt(target.style.top) + targetVerticalSpeed) + "px"
                     target.style.left = (parseInt(target.style.left) + targetHorizontalSpeed) + "px"
@@ -85,7 +86,7 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
 
             this.hit = function (event) {
                 var img = document.createElement("img")
-                img.src = "images/bullet_hole.png"
+                img.src = "resources/shooterImg/bullet_hole.png"
                 var x = event.clientX;     // Get the horizontal coordinate
                 var y = event.clientY;     // Get the vertical coordinate
                 if (hitMiss(event)) {
@@ -95,8 +96,8 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
                     var src = target
                     src.appendChild(img)
                     this.life -= 10
-                    targetVerticalSpeed = plusOrMinus()*targetVerticalSpeed*1.1
-                    targetHorizontalSpeed = plusOrMinus()*targetHorizontalSpeed*1.1
+                    targetVerticalSpeed = plusOrMinus() * targetVerticalSpeed * 1.1
+                    targetHorizontalSpeed = plusOrMinus() * targetHorizontalSpeed * 1.1
                     if (this.life == 0)
                         target.style.display = "none";
                 }
@@ -104,7 +105,7 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
 
             function targetCollision() {
                 //vertical collision
-                if (parseInt(target.style.top) + target.offsetHeight >  window.innerHeight || parseInt(target.style.top) < 0)
+                if (parseInt(target.style.top) + target.offsetHeight > window.innerHeight || parseInt(target.style.top) < 0)
                     targetVerticalSpeed = -targetVerticalSpeed
                 //horizontal collision
                 if (parseInt(target.style.left) + target.offsetWidth > window.innerWidth || parseInt(target.style.left) < 0)
@@ -130,14 +131,12 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
         document.addEventListener("keydown", function () {
             document.getElementsByClassName('game_over')[0].style.display = "none"
             document.getElementsByClassName('win')[0].style.display = "none"
-            if (event.keyCode == 82) {
+            if (event.keyCode == 82) {//82 = "r" button
                 document.getElementById("canvas").innerHTML = ""
                 for (var n = 0; n < 5; n++) {
                     targets[n] = new Target()
                     targets[n].move()
-                  //Todo why doesnt work ?
                 }
-
                 timing()
             }
         })
@@ -146,16 +145,16 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
         document.addEventListener("click", function (event) {
             shot()
 
-            var targetsLife=0
+            var targetsLife = 0
             for (var j = 0; j < targets.length; j++) {
                 targets[j].hit(event)
-                targetsLife+=targets[j].life
-                win =( targetsLife == 0)
+                targetsLife += targets[j].life
+                win = ( targetsLife == 0)
             }
-            if(win)
-            winLose()
+            if (win)
+                winLose()
             console.log(win)
-           // winLose()
+            // winLose()
         })
 
         //stop - start target
@@ -166,7 +165,7 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
                 }
                 move = true
             }
-            else if(event.keyCode == 80) {
+            else if (event.keyCode == 80) {
                 move = false
                 for (var k = 0; k < targets.length; k++) {
                     targets[k].stop()
@@ -195,18 +194,22 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
         }
 
 
-        function timing() {
+       var timing= function() {
+           console.log(timer)
+           if(timer!=undefined){
+               clearInterval(timer)
+           }
             var t = 20
-            var timer = setInterval(function () {
+            timer = setInterval(function () {
                 var countdown = document.getElementById("countdown")
-                countdown.textContent = t+"s"
+                countdown.textContent = t + "s"
                 t -= 1
                 if (t == 0) {
                     clearInterval(timer)
                     countdown.textContent = "time finished"
                     winLose()
                 }
-                if (win){
+                if (win) {
                     clearInterval(timer)
                 }
             }, 1000)
@@ -217,7 +220,7 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
             //lose
             if (!win) {
                 document.getElementsByClassName('game_over')[0].style.display = "block"
-            }
+                        }
             //win
             else {
                 document.getElementsByClassName('win')[0].style.display = "block"
@@ -226,7 +229,7 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
 
 
         function shot() {
-            var audio = new Audio('./sounds/gun-gunshot-01.mp3')
+            var audio = new Audio('resources/sounds/gun-gunshot-01.mp3')
             audio.play();
             var gun = document.getElementById("gun")
             gun.style.bottom = parseInt(gun.style.bottom) + 20 + "px"
@@ -240,5 +243,7 @@ transform: translate(-50%, 0px);"><img id="gunImg" src="./images/gun.png"></div>
 
 </script>
 
-</body>
-</html>
+
+
+
+</body></html>

@@ -1,33 +1,33 @@
 
 body, html {
-  height: 100%;
-  background-color: #5b5b5b;
+    height: 100%;
+    background-color: #5b5b5b;
 }
 
 
 #cross{
-	  
-  display: inline-block;
+
+    display: inline-block;
 }
 #target{
-	
-  position: absolute;
-  display: inline-block;
+
+    position: absolute;
+    display: inline-block;
 }
 #canvas{
-cursor:crosshair;
-  height: 100%;
+    cursor:crosshair;
+    height: 100%;
 }
 
 .hole{
-  position: absolute;
+    position: absolute;
 }
 #gun{
-      position: fixed;
-bottom: 0px;
-left: 50%;
-transform: translate(-50%, 0px);
-   }
+    position: fixed;
+    bottom: 0px;
+    left: 50%;
+    transform: translate(-50%, 0px);
+}
 
 #scores{
     list-style: none;
@@ -39,13 +39,15 @@ transform: translate(-50%, 0px);
     display: inline-block;
 }
 .game_over{
+    font-size: 40px;
     color: red;
     position: absolute;
     left: 50%;
     transform: translate(-50%, 0px);
-display: none;
-}
+    display: none;
+   }
 .win{
+    font-size: 40px;
     color: #fff236;
     position: absolute;
     left: 50%;
@@ -54,5 +56,5 @@ display: none;
 }
 #info{
     font-size: 2em;
-color: #f0ffff
+    color: #f0ffff
 }
